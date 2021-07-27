@@ -21,6 +21,8 @@ import sttp.client3.akkahttp.AkkaHttpBackend
 import sttp.client3.http4s.Http4sBackend
 import sttp.client3.{UriContext, basicRequest}
 
+import java.util.concurrent.Executors
+
 final case class Tender(title: String, deadline: String, value: Int, published: String, procedure: String, cycle: Int, status: String, descriptionTruncated: String, id: Int, ca: String)
 
 final case class Tenders(tenders: immutable.Seq[Tender])
@@ -47,10 +49,9 @@ class TenderRoutes()(implicit val system: ActorSystem[_]) {
     def parseJson(json: String) = json.parseJson.convertTo[List[Tender]]
 
     implicit val cs: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
-    Blocker[IO].use(blocker => {
-      BlazeClientBuilder[IO](blocker.blockingContext).resource.use(client => {
-        basicRequest.get(uri"https://api.tender-ni.com/tender").response(asStringAlways.map(parseJson)).send(Http4sBackend.usingClient(client, blocker)).map(x => Tenders(x.body))
-      })
+    val blocker = Blocker.liftExecutorService(Executors.newCachedThreadPool())
+    BlazeClientBuilder[IO](blocker.blockingContext).resource.use(client => {
+      basicRequest.get(uri"https://api.tender-ni.com/tender").response(asStringAlways.map(parseJson)).send(Http4sBackend.usingClient(client, blocker)).map(x => Tenders(x.body))
     }).unsafeRunSync()
   }
 
