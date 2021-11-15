@@ -1,8 +1,7 @@
 lazy val akkaHttpVersion = "10.2.4"
 lazy val akkaVersion    = "2.6.15"
-lazy val sttpVersion    = "3.3.6"
 
-lazy val newrelicAgentPath = "/home/gdownes/dev/newrelic-java-agent/newrelic-agent/build/newrelicJar/newrelic.jar"
+lazy val newrelicAgentPath = "/Users/gerarddownes/dev/newrelic-java-agent/newrelic-agent/build/newrelicJar/newrelic.jar"
 
 lazy val root = (project in file(".")).
   settings(
@@ -10,17 +9,15 @@ lazy val root = (project in file(".")).
       organization    := "com.example",
       scalaVersion    := "2.13.4"
     )),
-    name := "akka-http-sttp",
+    name := "newrelic-monix-api-usage",
     libraryDependencies ++= Seq(
       "com.typesafe.akka"             %% "akka-http"                % akkaHttpVersion,
       "com.typesafe.akka"             %% "akka-http-spray-json"     % akkaHttpVersion,
       "com.typesafe.akka"             %% "akka-actor-typed"         % akkaVersion,
       "com.typesafe.akka"             %% "akka-stream"              % akkaVersion,
       "ch.qos.logback"                % "logback-classic"           % "1.2.3",
-      "com.softwaremill.sttp.client3" %% "core"                     % sttpVersion,
-      "com.softwaremill.sttp.client3" %% "akka-http-backend"        % sttpVersion,
-      "com.softwaremill.sttp.client3" %% "http4s-ce2-backend"       % sttpVersion,
-      "org.http4s"                    %% "http4s-blaze-client"      % "0.21.24"
+      "io.monix"                      %% "monix-eval"               % "3.4.0",
+      "com.newrelic.agent.java"       %% "newrelic-scala-monix-api"  % "7.5.0" from("file:///Users/gerarddownes/dev/newrelic-java-agent/newrelic-scala-monix-api/build/libs/newrelic-scala-monix-api_2.13-7.5.0-SNAPSHOT.jar")
     )
   )
 
